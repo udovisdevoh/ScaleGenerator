@@ -19,7 +19,7 @@ namespace ScaleGenerator
             Chord augmented = new Chord(0, 4, 8);
             Chord diminished = new Chord(0, 3, 6);
 
-            scaleGenerator.AddChord(minor, 3);
+            scaleGenerator.AddChord(minor, 4);
             scaleGenerator.AddChord(major, 3);
             scaleGenerator.AddChord(diminished, 1);
             //scaleGenerator.AddChord(augmented, 1);

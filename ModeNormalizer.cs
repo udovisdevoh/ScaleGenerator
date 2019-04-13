@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScaleGenerator
 {
-    public static class ModeRemover
+    public static class ModeNormalizer
     {
         public static IEnumerable<Chord> RemoveAllModes(IEnumerable<Chord> scalesWithAllModes)
         {

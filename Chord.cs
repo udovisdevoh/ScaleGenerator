@@ -60,6 +60,11 @@ namespace ScaleGenerator
             }
         }
 
+        public int Length
+        {
+            get { return this.notes.Length; }
+        }
+
         public int Stability
         {
             get
@@ -78,6 +83,50 @@ namespace ScaleGenerator
                 return stability;
             }
         }
+
+        public int Last
+        {
+            get { return this.last; }
+        }
+
+        public int DiatonicCloseness
+        {
+            get
+            {
+                int diatonicCloseness = 0;
+
+                if (this.notes.Contains(0))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(2))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(4))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(5))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(7))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(9))
+                {
+                    ++diatonicCloseness;
+                }
+                if (this.notes.Contains(11))
+                {
+                    ++diatonicCloseness;
+                }
+
+                return diatonicCloseness;
+            }
+        }
         #endregion
 
         private int Modulo(int value, int maxValue)
@@ -93,11 +142,6 @@ namespace ScaleGenerator
             return value;
         }
 
-        public int Last
-        {
-            get { return this.last; }
-        }
-
         public override string ToString()
         {
             return ChordDescriptor.GetChordDescription(this.notes);
@@ -106,6 +150,18 @@ namespace ScaleGenerator
         public IEnumerator<int> GetEnumerator()
         {
             return this.notes.ToList().GetEnumerator();
+        }
+
+        public Chord GetKeyModulatedScaleNormalizedToZero(int offset)
+        {
+            int[] newNotes = new int[this.notes.Length];
+
+            for (int index = 0; index < this.notes.Length; ++index)
+            {
+                newNotes[index] = this.Modulo(this.notes[index] - offset, 12);
+            }
+
+            return new Chord(newNotes);
         }
 
         public Chord GetKeyModulatedScale(int offset)
@@ -117,7 +173,11 @@ namespace ScaleGenerator
                 newNotes[index] = this.Modulo(this.notes[index] - offset, 12);
             }
 
-            return new Chord(newNotes);
+            Chord chord = new Chord(new int[1] { 0 });
+            chord.notes = newNotes;
+            chord.last = newNotes[newNotes.Length - 1];
+
+            return chord;
         }
 
         public Chord GetModeModulatedScale(int offset)
