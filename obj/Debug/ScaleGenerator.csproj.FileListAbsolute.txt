@@ -1,7 +1,0 @@
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\bin\Debug\ScaleGenerator.exe.config
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\bin\Debug\ScaleGenerator.exe
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\bin\Debug\ScaleGenerator.pdb
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\obj\Debug\ScaleGenerator.csprojAssemblyReference.cache
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\obj\Debug\ScaleGenerator.csproj.CoreCompileInputs.cache
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\obj\Debug\ScaleGenerator.exe
-D:\anonymous\Documents\Programming\C Sharp\ScaleGenerator\obj\Debug\ScaleGenerator.pdb
