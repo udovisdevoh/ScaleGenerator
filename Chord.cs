@@ -9,10 +9,13 @@ namespace ScaleGenerator
 {
     public class Chord : IEnumerable<int>
     {
+        #region Members
         private int[] notes;
 
         private int last;
+        #endregion
 
+        #region Constructors
         public Chord(params int[] newNotes)
         {
             if (newNotes.Length < 1)
@@ -46,6 +49,36 @@ namespace ScaleGenerator
             this.notes = newNotes.ToArray();
             this.last = notes[this.notes.Length - 1];
         }
+        #endregion
+
+        #region Properties
+        public int Brightness
+        {
+            get
+            {
+                return this.notes.Sum();
+            }
+        }
+
+        public int Stability
+        {
+            get
+            {
+                int stability = 0;
+
+                if (this.notes.Contains(7))
+                {
+                    stability+=7;
+                }
+                if (this.notes.Contains(5))
+                {
+                    stability+=5;
+                }
+
+                return stability;
+            }
+        }
+        #endregion
 
         private int Modulo(int value, int maxValue)
         {
@@ -70,17 +103,113 @@ namespace ScaleGenerator
             StringBuilder stringBuilder = new StringBuilder();
 
             bool isFirst = true;
-            foreach (int note in this.notes)
+
+            for (int noteIndex = 0; noteIndex < this.notes.Length; ++noteIndex)
             {
+                int previousNote = noteIndex > 0 ? this.notes[noteIndex - 1] : -1;
+                int currentNote = this.notes[noteIndex];
+                int nextNote = noteIndex < this.notes.Length - 1 ? this.notes[noteIndex + 1] : -1;
+
                 if (!isFirst)
                 {
                     stringBuilder.Append(", ");
                 }
-                stringBuilder.Append(note);
+                stringBuilder.Append(this.GetNoteDescription(previousNote, currentNote, nextNote));
                 isFirst = false;
             }
 
             return stringBuilder.ToString();
+        }
+
+        private string GetNoteDescription(int previousNote, int currentNote, int nextNote)
+        {
+            if (currentNote == 0)
+            {
+                return "C";
+            }
+            else if (currentNote == 2)
+            {
+                return "D";
+            }
+            else if (currentNote == 4)
+            {
+                return "E";
+            }
+            else if (currentNote == 5)
+            {
+                return "F";
+            }
+            else if (currentNote == 7)
+            {
+                return "G";
+            }
+            else if (currentNote == 9)
+            {
+                return "A";
+            }
+            else if (currentNote == 11)
+            {
+                return "B";
+            }
+            else if (currentNote == 1)
+            {
+                if (previousNote == 0)
+                {
+                    return "Db";
+                }
+                else
+                {
+                    return "C#";
+                }
+            }
+            else if (currentNote == 3)
+            {
+                if (previousNote == 2 || previousNote == 1)
+                {
+                    return "Eb";
+                }
+                else
+                {
+                    return "D#";
+                }
+            }
+            else if (currentNote == 6)
+            {
+                if (previousNote == 5)
+                {
+                    return "Gb";
+                }
+                else
+                {
+                    return "F#";
+                }
+            }
+            else if (currentNote == 8)
+            {
+                if (previousNote == 7 || previousNote == 6)
+                {
+                    return "Ab";
+                }
+                else
+                {
+                    return "G#";
+                }
+            }
+            else if (currentNote == 10)
+            {
+                if (previousNote == 9 || previousNote == 8)
+                {
+                    return "Bb";
+                }
+                else
+                {
+                    return "A#";
+                }
+            }
+            else
+            {
+                return currentNote.ToString();
+            }
         }
 
         public IEnumerator<int> GetEnumerator()
