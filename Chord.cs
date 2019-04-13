@@ -144,7 +144,7 @@ namespace ScaleGenerator
 
         public override string ToString()
         {
-            return ChordDescriptor.GetChordDescription(this.notes);
+            return ScaleDescriptor.GetScaleDescription(this.notes);
         }
 
         public IEnumerator<int> GetEnumerator()

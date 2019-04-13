@@ -20,24 +20,24 @@ namespace ScaleGenerator
             chords.Add(chord, count);
         }
 
-        public IEnumerable<Chord> GenerateScales(int noteCountInScale)
+        public IEnumerable<Chord> GenerateScales(int noteCountInScale, bool isEnableMultipleSameSizeChordOnSameRootNote)
         {
-            IEnumerable<Chord> scalesWithAllModes = this.GenerateScales(noteCountInScale, true).OrderByDescending(scale => scale.Stability).ThenByDescending(scale => scale.Brightness).ToList();
+            IEnumerable<Chord> scalesWithAllModes = this.GenerateScales(noteCountInScale, true, isEnableMultipleSameSizeChordOnSameRootNote).OrderByDescending(scale => scale.Stability).ThenByDescending(scale => scale.Brightness).ToList();
             IEnumerable<Chord> scalesWithoutModes = ModeNormalizer.RemoveAllModes(scalesWithAllModes).ToList();
             IEnumerable<Chord> scalesWithKeyCloserToDiatonicModes = KeyNormalizer.GetMostDiatonicModes(scalesWithoutModes).ToList();
 
             return scalesWithKeyCloserToDiatonicModes;
         }
 
-        private IEnumerable<Chord> GenerateScales(int noteCountInScale, bool isApplyChordCountFilter)
+        private IEnumerable<Chord> GenerateScales(int noteCountInScale, bool isApplyChordCountFilter, bool isEnableMultipleSameSizeChordOnSameRootNote)
         {
             if (isApplyChordCountFilter)
             {
-                IEnumerable<Chord> scalesRegardlessChords = this.GenerateScales(noteCountInScale, false).ToList();
+                IEnumerable<Chord> scalesRegardlessChords = this.GenerateScales(noteCountInScale, false, true).ToList();
 
                 foreach (Chord scale in scalesRegardlessChords)
                 {
-                    if (this.IsMatchChordCount(scale))
+                    if (this.IsMatchChordCount(scale, isEnableMultipleSameSizeChordOnSameRootNote))
                     {
                         yield return scale;
                     }
@@ -51,7 +51,7 @@ namespace ScaleGenerator
                 }
                 else
                 {
-                    IEnumerable<Chord> smallerScales = this.GenerateScales(noteCountInScale - 1, false);
+                    IEnumerable<Chord> smallerScales = this.GenerateScales(noteCountInScale - 1, false, true);
 
                     foreach (Chord smallerScale in smallerScales)
                     {
@@ -66,14 +66,14 @@ namespace ScaleGenerator
             }
         }
 
-        private bool IsMatchChordCount(Chord scale)
+        private bool IsMatchChordCount(Chord scale, bool isEnableMultipleSameSizeChordOnSameRootNote)
         {
             foreach (KeyValuePair<Chord, int> chordCount in this.chords)
             {
                 Chord chord = chordCount.Key;
                 int count = chordCount.Value;
 
-                if (this.GetChordCount(scale, chord) < count)
+                if (this.GetChordCount(scale, chord, isEnableMultipleSameSizeChordOnSameRootNote, this.chords.Keys) < count)
                 {
                     return false;
                 }
@@ -82,12 +82,12 @@ namespace ScaleGenerator
             return true;
         }
 
-        private int GetChordCount(Chord scale, Chord chord)
+        private int GetChordCount(Chord scale, Chord chord, bool isEnableMultipleSameSizeChordOnSameRootNote, IEnumerable<Chord> allChords)
         {
             int count = 0;
             foreach (int notePosition in scale)
             {
-                if (this.IsMatchChordAt(scale, chord, notePosition))
+                if (this.IsMatchChordAt(scale, chord, notePosition, isEnableMultipleSameSizeChordOnSameRootNote, allChords))
                 {
                     ++count;
                 }
@@ -95,10 +95,27 @@ namespace ScaleGenerator
             return count;
         }
 
-        private bool IsMatchChordAt(Chord scale, Chord chordToMatch, int notePosition)
+        private bool IsMatchChordAt(Chord scale, Chord chordToMatch, int notePosition, bool isEnableMultipleSameSizeChordOnSameRootNote, IEnumerable<Chord> allChords)
         {
             Chord scaleWithOffset = scale.GetKeyModulatedScaleNormalizedToZero(notePosition);
-            return scaleWithOffset.ContainsChord(chordToMatch);
+
+            bool isMatchChordAtPosition = scaleWithOffset.ContainsChord(chordToMatch);
+
+            if (isMatchChordAtPosition && !isEnableMultipleSameSizeChordOnSameRootNote)
+            {
+                foreach (Chord otherChord in allChords)
+                {
+                    if (otherChord != chordToMatch && otherChord.Length == chordToMatch.Length)
+                    {
+                        if (scaleWithOffset.ContainsChord(otherChord))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return isMatchChordAtPosition;
         }
 
         private IEnumerable<Chord> BuildScalesFromSmallerScale(Chord smallerScale)

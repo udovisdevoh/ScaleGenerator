@@ -6,9 +6,27 @@ using System.Threading.Tasks;
 
 namespace ScaleGenerator
 {
-    public static class ChordDescriptor
+    public static class ScaleDescriptor
     {
-        public static string GetChordDescription(int[] notes)
+        #region Members
+        private static Chord minor = new Chord(0, 3, 7);
+
+        private static Chord major = new Chord(0, 4, 7);
+
+        private static Chord augmented = new Chord(0, 4, 8);
+
+        private static Chord diminished = new Chord(0, 3, 6);
+
+        private static Dictionary<string, Chord> chordTypes = new Dictionary<string, Chord>()
+        {
+            {  "minor", minor },
+            {  "major", major },
+            {  "augmented", augmented },
+            {  "diminished", diminished }
+        };
+        #endregion
+
+        public static string GetScaleDescription(int[] notes)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -28,7 +46,65 @@ namespace ScaleGenerator
                 isFirst = false;
             }
 
+            IEnumerable<string> chordDescriptions = GetChordDescriptions(notes);
+
+            foreach (string chordDescription in chordDescriptions)
+            {
+                stringBuilder.Append(chordDescription);
+            }
+
             return stringBuilder.ToString();
+        }
+
+        private static IEnumerable<string> GetChordDescriptions(int[] notes)
+        {
+            for (int noteIndex = 0; noteIndex < notes.Length; ++noteIndex)
+            {
+                int previousNote = noteIndex > 0 ? notes[noteIndex - 1] : -1;
+                int currentNote = notes[noteIndex];
+                int nextNote = noteIndex < notes.Length - 1 ? notes[noteIndex + 1] : -1;
+
+                string chordDescription = GetChordDescriptions(notes, previousNote, currentNote, nextNote);
+
+                if (chordDescription != null)
+                {
+                    yield return chordDescription;
+                }
+            }
+        }
+
+        private static string GetChordDescriptions(int[] notes, int previousNote, int currentNote, int nextNote)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (KeyValuePair<string, Chord> chordAndName in chordTypes)
+            {
+                string chordTypeName = chordAndName.Key;
+                Chord chordType = chordAndName.Value;
+
+                if (IsMatchChordAt(notes, currentNote, chordType))
+                {
+                    stringBuilder.AppendLine(" - | - " + GetNoteDescription(previousNote, currentNote, nextNote) + " " + chordTypeName);
+                }
+            }
+
+            if (stringBuilder.Length == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return stringBuilder.ToString();
+            }
+        }
+
+        private static bool IsMatchChordAt(int[] notes, int currentNote, Chord chordToMatch)
+        {
+            Chord scale = new Chord(notes);
+            Chord scaleWithOffset = scale.GetKeyModulatedScaleNormalizedToZero(currentNote);
+
+            bool isMatchChordAtPosition = scaleWithOffset.ContainsChord(chordToMatch);
+
+            return isMatchChordAtPosition;
         }
 
         private static string GetNoteDescription(int previousNote, int currentNote, int nextNote)

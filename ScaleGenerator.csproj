@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chord.cs" />
-    <Compile Include="ChordDescriptor.cs" />
+    <Compile Include="ScaleDescriptor.cs" />
     <Compile Include="KeyNormalizer.cs" />
     <Compile Include="ModeNormalizer.cs" />
     <Compile Include="Program.cs" />
