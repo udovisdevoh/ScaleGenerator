@@ -19,10 +19,10 @@ namespace ScaleGenerator
 
         private static Dictionary<string, Chord> chordTypes = new Dictionary<string, Chord>()
         {
-            {  "minor", minor },
-            {  "major", major },
-            {  "augmented", augmented },
-            {  "diminished", diminished }
+            {  "min", minor },
+            {  "Maj", major },
+            {  "aug", augmented },
+            {  "dim", diminished }
         };
         #endregion
 
@@ -83,7 +83,7 @@ namespace ScaleGenerator
 
                 if (IsMatchChordAt(notes, currentNote, chordType))
                 {
-                    stringBuilder.AppendLine(" - | - " + GetNoteDescription(previousNote, currentNote, nextNote) + " " + chordTypeName);
+                    stringBuilder.AppendLine(" - " + GetNoteDescription(previousNote, currentNote, nextNote) + " " + chordTypeName);
                 }
             }
 
