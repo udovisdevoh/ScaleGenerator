@@ -24,7 +24,7 @@ namespace ScaleGenerator
             scaleGenerator.AddChord(diminished, 1);
             //scaleGenerator.AddChord(augmented, 1);
 
-            IEnumerable<Chord> scales = scaleGenerator.GenerateScales(noteCountInScale).OrderBy(scale => scale.Stability).ThenBy(scale => scale.Brightness).ToList();
+            IEnumerable<Chord> scales = scaleGenerator.GenerateScales(noteCountInScale);
             scaleGenerator.Reset();
 
             foreach (Chord scale in scales)

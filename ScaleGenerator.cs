@@ -22,7 +22,9 @@ namespace ScaleGenerator
 
         public IEnumerable<Chord> GenerateScales(int noteCountInScale)
         {
-            return this.GenerateScales(noteCountInScale, true);
+            IEnumerable<Chord> scalesWithAllModes = this.GenerateScales(noteCountInScale, true).OrderByDescending(scale => scale.Stability).ThenByDescending(scale => scale.Brightness).ToList();
+            IEnumerable<Chord> scalesWithoutModes = ModeRemover.RemoveAllModes(scalesWithAllModes).ToList();
+            return scalesWithoutModes;
         }
 
         private IEnumerable<Chord> GenerateScales(int noteCountInScale, bool isApplyChordCountFilter)
@@ -93,7 +95,7 @@ namespace ScaleGenerator
 
         private bool IsMatchChordAt(Chord scale, Chord chordToMatch, int notePosition)
         {
-            Chord scaleWithOffset = scale.GetModulatedScale(notePosition);
+            Chord scaleWithOffset = scale.GetKeyModulatedScale(notePosition);
             return scaleWithOffset.ContainsChord(chordToMatch);
         }
 
