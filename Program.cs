@@ -12,7 +12,7 @@ namespace ScaleGenerator
         {
             ScaleGenerator scaleGenerator = new ScaleGenerator();
 
-            const int noteCountInScale = 7;
+            const int noteCountInScale = 6;
             const bool isEnableMultipleSameSizeChordOnSameRootNote = false;
 
             Chord minor = new Chord(0, 3, 7);
@@ -22,9 +22,9 @@ namespace ScaleGenerator
             Chord powerChord = new Chord(0, 7);
             Chord fourth = new Chord(0, 5);
 
-            //scaleGenerator.AddChord(minor, 2);
+            scaleGenerator.AddChord(minor, 2);
             //scaleGenerator.AddChord(major, 1);
-            scaleGenerator.AddChord(powerChord, 6);
+            scaleGenerator.AddChord(powerChord, 4);
             //scaleGenerator.AddChord(fourth, 5);
             //scaleGenerator.AddChord(diminished, 1);
             //scaleGenerator.AddChord(augmented, 1);
